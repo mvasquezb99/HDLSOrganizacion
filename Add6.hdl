@@ -1,0 +1,11 @@
+CHIP Add6{
+    IN a[6], b[6],c;
+    OUT sum[6];
+    PARTS:
+        FullAdder(a=a[0], b=b[0], c=false ,sum=sum[0], carry=carry1);
+        FullAdder(a=a[1], b=b[1], c=carry1, sum=sum[1], carry=carry2);
+        FullAdder(a=a[2], b=b[2], c=carry2, sum=sum[2], carry=carry3);
+        FullAdder(a=a[3], b=b[3], c=carry3, sum=sum[3], carry=carry4);
+        FullAdder(a=a[4], b=b[4], c=carry4, sum=sum[4], carry=carry5);
+        FullAdder(a=a[5], b=b[5], c=carry5, sum=sum[5], carry=carry6);
+}

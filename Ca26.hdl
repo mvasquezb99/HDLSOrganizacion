@@ -1,0 +1,9 @@
+CHIP Ca26{
+    IN 
+        a[6];
+    OUT 
+        out[6];
+    PARTS:
+        Not6(in=a, out=outCa1);
+        Inc6(a=outCa1, sum=out);
+}

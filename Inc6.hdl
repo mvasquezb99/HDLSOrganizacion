@@ -1,0 +1,6 @@
+CHIP Inc6{
+    IN a[6];
+    OUT sum[6];
+    PARTS:
+        Add6(a=a, b[0]=true,sum=sum);
+}

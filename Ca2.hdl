@@ -1,0 +1,9 @@
+CHIP Ca2{
+    IN 
+        a[16];
+    OUT 
+        out[16];
+    PARTS:
+        Not16(in=a, out=outCa1);
+        Inc16(a=outCa1, sum=out);
+}

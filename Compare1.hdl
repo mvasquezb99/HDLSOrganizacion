@@ -1,0 +1,18 @@
+CHIP Compare1 {
+    IN a, b;
+    OUT gt,lt,eq;
+
+    PARTS:
+
+    Not(in=b, out=notb);
+    Not(in=a, out=nota);
+    
+    And(a=a, b=notb, out=gt);
+
+    And(a=nota, b=b, out=lt);
+
+    And(a=nota, b=notb, out=eq1);
+    And(a=a, b=b, out=eq2);
+
+    Or(a=eq1, b=eq2, out=eq);    
+}

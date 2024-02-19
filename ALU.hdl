@@ -1,0 +1,88 @@
+// This file is part of www.nand2tetris.org
+// and the book "The Elements of Computing Systems"
+// by Nisan and Schocken, MIT Press.
+// File name: projects/02/ALU.hdl
+
+/**
+ * The ALU (Arithmetic Logic Unit).
+ * Computes one of the following functions:
+ * x+y, x-y, y-x, 0, 1, -1, x, y, -x, -y, !x, !y,
+ * x+1, y+1, x-1, y-1, x&y, x|y on two 16-bit inputs, 
+ * according to 6 input bits denoted zx,nx,zy,ny,f,no.
+ * In addition, the ALU computes two 1-bit outputs:
+ * if the ALU output == 0, zr is set to 1; otherwise zr is set to 0;
+ * if the ALU output < 0, ng is set to 1; otherwise ng is set to 0.
+ */
+
+// Implementation: the ALU logic manipulates the x and y inputs
+// and operates on the resulting values, as follows:
+//TODO: implement
+//* if (zx == 1) set x = 0        // 16-bit constant Part => DMUX Sel=1 
+//* if (nx == 1) set x = !x       // bitwise not Part => MUX Sel=0 => NOT
+//* if (zy == 1) set y = 0        // 16-bit constant Part => DMUX Sel=0
+//* if (ny == 1) set y = !y       // bitwise not Part => MUX Sel=1 => NOT 
+//* if (f == 1)  set out = x + y  // integer 2's complement addition Part => 16Adder(x,y) => out=sum
+//* if (f == 0)  set out = x & y  // bitwise and Part => And16(x,y)
+//* if (no == 1) set out = !out   // bitwise not 
+//* if (out == 0) set zr = 1
+//* if (out < 0) set ng = 1
+
+CHIP ALU {
+    IN  
+        x[16], y[16],  // 16-bit inputs        
+        zx, // zero the x input?
+        nx, // negate the x input?
+        zy, // zero the y input?
+        ny, // negate the y input?
+        f,  // compute out = x + y (if 1) or x & y (if 0)
+        no; // negate the out output?
+
+    OUT 
+        out[16], // 16-bit output
+        zr, // 1 if (out == 0), 0 otherwise
+        ng; // 1 if (out < 0),  0 otherwise
+
+    PARTS:
+    //? if (zx == 1) set x = 0 => Hay que decidir si sacar X o 0 dependiendo del valor de zx, si zx=1 sale b y sx=0 sale a.
+        Mux16(a=x, b=false, sel=zx, out=xDoubt);
+    //? if (zy == 1) set y = 0 => Lo mismo pero con y.
+        Mux16(a=y, b=false, sel=zy, out=yDoubt);
+    //? if (nx == 1) set x = !x => Primero negamos el valor para tenerlo y luego elegimos segun nx. 
+        Not16(in=xDoubt, out=xNeg);
+        Mux16(a=xDoubt, b=xNeg, sel=nx, out=xOp);
+    //? if (ny == 1) set y = !y   Lo mismo pero con y.
+        Not16(in=yDoubt, out=yNeg);
+        Mux16(a=yDoubt, b=yNeg, sel=ny, out=yOp);
+    //? if (f == 1)  set out = x + y || if (f == 0)  set out = x & y => Sacamos los dos valores primero con los respectivos CHIPS y luego elegimos cual guardar segun f.
+        Add16(a=xOp, b=yOp, c=false, sum=outAdd16);
+        And16(a=xOp, b=yOp, out=outAnd16);
+        Mux16(a=outAnd16, b=outAdd16, sel=f, out=outOp);
+    //? if (no == 1) set out = !out => Negamos el valor y luego elegimos entre el original y el negado segun no.
+    //! Esta operacion tambien da el valor de la flag ng, ya que el signo es el bit mas significativo del numero.  
+        Not16(in=outOp, out=outOpNeg);         
+        Mux16(a=outOp, b=outOpNeg, sel=no, out=out, out=readyOut, out[15]=ng ,out[0..7]=zrLow, out[8..15]=zrHigh);
+                
+    // if (out == 0) set zr = 1 => NI idea la buena :) .
+        Or8Way(in=zrLow, out=or1Out);
+        Or8Way(in=zrHigh, out=or2Out);
+        Or(a=or1Out, b=or2Out, out=or3Out);
+        Not(in=or3Out, out=zr);
+        
+        
+    
+
+
+
+        
+        
+        
+
+
+        
+        
+        
+
+
+        
+
+}
