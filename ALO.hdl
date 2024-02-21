@@ -47,7 +47,7 @@ CHIP ALO{
         Mux16(a=y, b=x, sel=altb,out[0..8]=opFractionLow);
 
         //* Encontrar fraccion del Mayor exponente.
-        Mux16(a=x, b=y, sel=altb,out[0..8]=opFractionHigh, out[0]=outSigResult);
+        Mux16(a=x, b=y, sel=altb,out[0..8]=opFractionHigh, out[15]=outSigResult);
         
         //* Añadir el 1 a la izuierda a los dos
         RightShifter(in=opFractionLow, out=shiftLow);
@@ -73,18 +73,19 @@ CHIP ALO{
 
         Mux8Way9(a=shiftLow,b=shift1,c=shift2,d=shift3,e=shift4,f=shift5,g=shift6,h=shift7,sel=mux9Flag, out=shiftResult);
 
-        Mux9(a=opFractionHigh, b=shiftResult, sel=aeqb, out=finalHighShift);
+        Mux9(a=opFractionHigh, b=shiftHigh, sel=aeqb, out=finalHighShift);
 
         //* Si son iguales
         Add9carry(a=shiftResult,b=finalHighShift, sum=finalEqFraction, carry=isCarry);
         // Add6(a=rExponent, b=true, sum=expResultOne);
         Inc6(a=rExponent, sum=expResultOne);
         // RightShifterZero16(in=outEqFraction, out=finalEqFraction);
-        
-        //* Sumamos las fracciones.
-        Add9(a=shiftResult,b=finalHighShift,sum=outLtFraccion);
+
+        //* Sumo las fracciones.
+        Add9carry(a=shiftResult,b=finalHighShift,sum=outLtFraccion, carry=isCarryEnd);
 
         Mux9(a=outLtFraccion, b=finalEqFraction, sel=aeqb, out[0..8]=outFraccionResult);
+         
 
         Mux6(a=rExponent, b=expResultOne, sel=isCarry, out=finalExpo);
 
