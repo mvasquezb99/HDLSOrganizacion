@@ -95,5 +95,5 @@ CHIP ALO{
 
         Mux4Way16(a=sOut, b=rOut, c=outIEEE, d=false, sel=fo, out=out);
         
-        
+        //! Esta dando bien!!!!!!!
 }
