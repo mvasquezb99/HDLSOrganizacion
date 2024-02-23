@@ -93,7 +93,14 @@ CHIP ALO{
 
         // 8 bit add between exponent [14..9] and -31 100001
 
-        Mux4Way16(a=sOut, b=rOut, c=outIEEE, d=false, sel=fo, out=out);
+        Mux4Way16(a=sOut, b=rOut, c=outIEEE, d=false, sel=fo, out=out, out[15]=ng, out[0..7]=zrLow, out[8..15]=zrHigh);
+
+        Or8Way(in=zrLow, out=or1Out);
+        Or8Way(in=zrHigh, out=or2Out);
+        Or(a=or1Out, b=or2Out, out=or3Out);
+        Not(in=or3Out, out=zr);
+
+
         
         //! Esta dando bien!!!!!!!
 }
